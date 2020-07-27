@@ -1,0 +1,10 @@
+{
+  "autoload": {
+    "psr-4": {
+      "Elevator\\": "app/Module/Elevator/src"
+    }
+  },
+  "require": {
+    "symfony/console": "^5.1"
+  }
+}
