@@ -1,11 +1,11 @@
 <?php
 
+use Elevator\Entity\ElevatorPassenger;
 use Elevator\Factory\ElevatorFactory;
+use Elevator\Logger\ConsoleLogger;
 use Elevator\Service\Elevator;
 use Elevator\Service\ElevatorMovementBuilder;
 use Elevator\Strategy\SimpleElevatorMovementStrategy;
-use Elevator\Entity\ElevatorPassenger;
-use Elevator\Logger\ConsoleLogger;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 

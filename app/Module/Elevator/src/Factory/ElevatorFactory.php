@@ -34,7 +34,7 @@ class ElevatorFactory
     /**
      * @return mixed
      */
-    public function getElevatorClass()
+    public function getElevatorClass(): string
     {
         return $this->elevatorClass;
     }
@@ -54,7 +54,7 @@ class ElevatorFactory
     /**
      * @return mixed
      */
-    public function getElevatorMovementBuilderClass()
+    public function getElevatorMovementBuilderClass(): string
     {
         return $this->elevatorMovementBuilderClass;
     }
@@ -112,7 +112,7 @@ class ElevatorFactory
     }
 
     /**
-     * @return \Elevator\Service\Elevator
+     * @return Elevator
      */
     public function build(): Elevator
     {

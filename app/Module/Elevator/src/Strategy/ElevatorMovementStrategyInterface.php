@@ -2,8 +2,8 @@
 
 namespace Elevator\Strategy;
 
-use Elevator\Service\AbstractElevator;
 use Elevator\Container\MovementContainer;
+use Elevator\Service\AbstractElevator;
 
 /**
  * Interface ElevatorMovementStrategyInterface
@@ -13,9 +13,9 @@ use Elevator\Container\MovementContainer;
 interface ElevatorMovementStrategyInterface
 {
     /**
-     * @param \Elevator\Service\AbstractElevator $elevator
+     * @param AbstractElevator $elevator
      *
-     * @return \Elevator\Container\MovementContainer
+     * @return MovementContainer
      */
     public function calculateMovementPlan(AbstractElevator $elevator): MovementContainer;
 }

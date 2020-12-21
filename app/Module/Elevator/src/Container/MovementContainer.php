@@ -64,9 +64,9 @@ class MovementContainer implements Iterator
     }
 
     /**
-     * @return int|void
+     * @return int|null
      */
-    public function next()
+    public function next(): ?int
     {
         return $this->movements[++$this->position];
     }

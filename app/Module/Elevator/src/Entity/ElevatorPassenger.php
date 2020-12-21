@@ -63,5 +63,4 @@ class ElevatorPassenger implements ElevatorDirectionInterface
     {
         return $this->targetFloor;
     }
-
 }

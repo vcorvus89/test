@@ -2,9 +2,9 @@
 
 namespace Elevator\Strategy;
 
+use Elevator\Container\MovementContainer;
 use Elevator\Entity\ElevatorPassenger;
 use Elevator\Service\AbstractElevator;
-use Elevator\Container\MovementContainer;
 
 /**
  * Class SimpleElevatorMovementStrategy
@@ -14,9 +14,9 @@ use Elevator\Container\MovementContainer;
 class SimpleElevatorMovementStrategy implements ElevatorMovementStrategyInterface
 {
     /**
-     * @param \Elevator\Service\AbstractElevator $elevator
+     * @param AbstractElevator $elevator
      *
-     * @return \Elevator\Container\MovementContainer
+     * @return MovementContainer
      *
      * Так как не указано время вызова лифта каждым из пассажиров и все инструкции поступают заранее -
      * параметр лифта "speed" не имеет смысла и считаем, что лифт был вызван одновременно всеми пассажирами.
@@ -59,8 +59,8 @@ class SimpleElevatorMovementStrategy implements ElevatorMovementStrategyInterfac
     }
 
     /**
-     * @param \Elevator\Container\MovementContainer  $movementContainer
-     * @param                                     $passengers
+     * @param MovementContainer                     $movementContainer
+     * @param                                       $passengers
      */
     protected function populateFloorSequenceWithUpSteps(MovementContainer $movementContainer, $passengers): void
     {
@@ -88,8 +88,8 @@ class SimpleElevatorMovementStrategy implements ElevatorMovementStrategyInterfac
     }
 
     /**
-     * @param \Elevator\Container\MovementContainer  $movementContainer
-     * @param                                     $passengers
+     * @param MovementContainer                     $movementContainer
+     * @param                                       $passengers
      */
     protected function populateFloorSequenceWithDownSteps(MovementContainer $movementContainer, $passengers): void
     {

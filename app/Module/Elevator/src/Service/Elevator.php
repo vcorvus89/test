@@ -9,5 +9,4 @@ namespace Elevator\Service;
  */
 class Elevator extends AbstractElevator
 {
-
 }

@@ -3,6 +3,7 @@
 namespace Elevator\Service;
 
 use Elevator\Entity\ElevatorPassenger;
+use Elevator\Logger\AbstractLogger;
 
 /**
  * Class AbstractElevator
@@ -56,12 +57,12 @@ abstract class AbstractElevator
     protected $passengersInside = [];
 
     /**
-     * @var \Elevator\Service\ElevatorMovementBuilder
+     * @var ElevatorMovementBuilder
      */
     protected $movementBuilder;
 
     /**
-     * @var \Elevator\Logger\AbstractLogger
+     * @var AbstractLogger
      */
     protected $logger;
 
@@ -77,7 +78,10 @@ abstract class AbstractElevator
         $this->logger          = $logger;
     }
 
-    public function run()
+    /**
+     * Run elevator
+     */
+    public function run(): void
     {
         $movementPlan = $this->movementBuilder->getMovementPlan($this);
 
@@ -89,83 +93,23 @@ abstract class AbstractElevator
     }
 
     /**
-     * @return string
-     */
-    public function getCurrentState(): string
-    {
-        return $this->currentState;
-    }
-
-    /**
-     * @param $currentState
+     * @param int $targetFloor
      *
-     * @return $this
+     * @return void
      */
-    public function setCurrentState($currentState): self
+    protected function goToFloor(int $targetFloor): void
     {
-        $this->currentState = $currentState;
+        if ($targetFloor !== $this->getCurrentFloor()) {
+            if ($targetFloor > $this->getCurrentFloor()) {
+                $this->goUp($targetFloor);
+            }
 
-        return $this;
-    }
+            if ($targetFloor < $this->getCurrentFloor()) {
+                $this->goDown($targetFloor);
+            }
 
-    /**
-     * @return int
-     */
-    public function getInitialFloor(): int
-    {
-        return $this->initialFloor;
-    }
-
-    /**
-     * @param int $initialFloor
-     *
-     * @return $this
-     */
-    public function setInitialFloor(int $initialFloor): self
-    {
-        $this->initialFloor = $initialFloor;
-
-        return $this;
-    }
-
-    /**
-     * @return int
-     */
-    public function getMinFloor(): int
-    {
-        return $this->minFloor;
-    }
-
-    /**
-     * @param int $minFloor
-     *
-     * @return $this
-     */
-    public function setMinFloor(int $minFloor): self
-    {
-        $this->minFloor = $minFloor;
-
-        return $this;
-    }
-
-    /**
-     * @return int
-     */
-    public function getMaxFloor(): int
-    {
-        return $this->maxFloor;
-    }
-
-    /**
-     * @param int $maxFloor
-     *
-     * @return $this
-     */
-    public function setMaxFloor(int $maxFloor): self
-    {
-        $this->maxFloor = $maxFloor;
-
-        return $this;
+            $this->stop();
+        }
     }
 
     /**
@@ -189,43 +133,81 @@ abstract class AbstractElevator
     }
 
     /**
+     * @param int $targetFloor
+     *
+     * @return void
+     */
+    protected function goUp(int $targetFloor = 1): void
+    {
+        if ($targetFloor <= $this->getMaxFloor()) {
+            $this->logger->log(sprintf('The elevator is going up on the %d floor', $targetFloor));
+            $this->currentState = self::CURRENT_STATE_GOING_UP;
+            $this->setCurrentFloor($targetFloor);
+        }
+    }
+
+    /**
      * @return int
      */
-    public function getSpeed(): int
+    public function getMaxFloor(): int
     {
-        return $this->speed;
+        return $this->maxFloor;
     }
 
     /**
-     * @param int $speed
+     * @param int $maxFloor
      *
      * @return $this
      */
-    public function setSpeed(int $speed): self
+    public function setMaxFloor(int $maxFloor): self
     {
-        $this->speed = $speed;
+        $this->maxFloor = $maxFloor;
 
         return $this;
     }
 
     /**
-     * @param $passenger
+     * @param int $targetFloor
+     *
+     * @return void
+     */
+    protected function goDown(int $targetFloor = 1): void
+    {
+        if ($targetFloor >= $this->getMinFloor()) {
+            $this->logger->log(sprintf('The elevator is going down on the %d floor', $targetFloor));
+            $this->currentState = self::CURRENT_STATE_GOING_DOWN;
+            $this->setCurrentFloor($targetFloor);
+        }
+    }
+
+    /**
+     * @return int
+     */
+    public function getMinFloor(): int
+    {
+        return $this->minFloor;
+    }
+
+    /**
+     * @param int $minFloor
      *
      * @return $this
      */
-    public function addPassenger(ElevatorPassenger $passenger): self
+    public function setMinFloor(int $minFloor): self
     {
-        $this->passengers[] = $passenger;
+        $this->minFloor = $minFloor;
 
         return $this;
     }
 
     /**
-     * @return array
+     * @return void
      */
-    public function getPassengers(): array
+    protected function stop(): void
     {
-        return $this->passengers;
+        $this->logger->log(sprintf('The elevator is stopping on the %d floor', $this->getCurrentFloor()));
+        $this->currentState = self::CURRENT_STATE_STOP;
+        $this->logger->log(sprintf('The elevator stopped on the %d floor', $this->getCurrentFloor()));
     }
 
     /**
@@ -280,60 +262,82 @@ abstract class AbstractElevator
     }
 
     /**
-     * @param int $targetFloor
-     *
-     * @return void
+     * @return string
      */
-    protected function goToFloor(int $targetFloor): void
+    public function getCurrentState(): string
     {
-        if ($targetFloor !== $this->getCurrentFloor()) {
-            if ($targetFloor > $this->getCurrentFloor()) {
-                $this->goUp($targetFloor);
-            }
-
-            if ($targetFloor < $this->getCurrentFloor()) {
-                $this->goDown($targetFloor);
-            }
-        
-            $this->stop();
-        }
+        return $this->currentState;
     }
 
     /**
-     * @param int $targetFloor
+     * @param $currentState
      *
-     * @return void
+     * @return $this
      */
-    protected function goUp(int $targetFloor = 1): void
+    public function setCurrentState($currentState): self
     {
-        if ($targetFloor <= $this->getMaxFloor()) {
-            $this->logger->log(sprintf('The elevator is going up on the %d floor', $targetFloor));
-            $this->currentState = self::CURRENT_STATE_GOING_UP;
-            $this->setCurrentFloor($targetFloor);
-        }
+        $this->currentState = $currentState;
+
+        return $this;
     }
 
     /**
-     * @param int $targetFloor
-     *
-     * @return void
+     * @return int
      */
-    protected function goDown(int $targetFloor = 1): void
+    public function getInitialFloor(): int
     {
-        if ($targetFloor >= $this->getMinFloor()) {
-            $this->logger->log(sprintf('The elevator is going down on the %d floor', $targetFloor));
-            $this->currentState = self::CURRENT_STATE_GOING_DOWN;
-            $this->setCurrentFloor($targetFloor);
-        }
+        return $this->initialFloor;
     }
 
     /**
-     * @return void
+     * @param int $initialFloor
+     *
+     * @return $this
      */
-    protected function stop(): void
+    public function setInitialFloor(int $initialFloor): self
     {
-        $this->logger->log(sprintf('The elevator is stopping on the %d floor', $this->getCurrentFloor()));
-        $this->currentState = self::CURRENT_STATE_STOP;
-        $this->logger->log(sprintf('The elevator stopped on the %d floor', $this->getCurrentFloor()));
+        $this->initialFloor = $initialFloor;
+
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getSpeed(): int
+    {
+        return $this->speed;
+    }
+
+    /**
+     * @param int $speed
+     *
+     * @return $this
+     */
+    public function setSpeed(int $speed): self
+    {
+        $this->speed = $speed;
+
+        return $this;
+    }
+
+    /**
+     * @param $passenger
+     *
+     * @return $this
+     */
+    public function addPassenger(ElevatorPassenger $passenger): self
+    {
+        $this->passengers[] = $passenger;
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getPassengers(): array
+    {
+        return $this->passengers;
     }
 }

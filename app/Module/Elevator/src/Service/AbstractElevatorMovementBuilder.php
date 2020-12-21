@@ -2,9 +2,9 @@
 
 namespace Elevator\Service;
 
+use Elevator\Container\MovementContainer;
 use Elevator\Interfaces\ElevatorDirectionInterface;
 use Elevator\Strategy\ElevatorMovementStrategyInterface;
-use Elevator\Container\MovementContainer;
 
 /**
  * Class AbstractElevatorMovementBuilder
@@ -14,14 +14,14 @@ use Elevator\Container\MovementContainer;
 abstract class AbstractElevatorMovementBuilder implements ElevatorDirectionInterface
 {
     /**
-     * @var \Elevator\Strategy\ElevatorMovementStrategyInterface
+     * @var ElevatorMovementStrategyInterface
      */
     protected $movementStrategy;
 
     /**
      * AbstractElevatorMovementBuilder constructor.
      *
-     * @param \Elevator\Strategy\ElevatorMovementStrategyInterface $movementStrategy
+     * @param ElevatorMovementStrategyInterface $movementStrategy
      */
     public function __construct(ElevatorMovementStrategyInterface $movementStrategy)
     {
@@ -29,7 +29,7 @@ abstract class AbstractElevatorMovementBuilder implements ElevatorDirectionInter
     }
 
     /**
-     * @return \Elevator\Strategy\ElevatorMovementStrategyInterface
+     * @return ElevatorMovementStrategyInterface
      */
     public function getMovementStrategy(): ElevatorMovementStrategyInterface
     {
@@ -37,7 +37,7 @@ abstract class AbstractElevatorMovementBuilder implements ElevatorDirectionInter
     }
 
     /**
-     * @param \Elevator\Strategy\ElevatorMovementStrategyInterface $movementStrategy
+     * @param ElevatorMovementStrategyInterface $movementStrategy
      */
     public function setMovementStrategy(ElevatorMovementStrategyInterface $movementStrategy): void
     {
@@ -45,9 +45,9 @@ abstract class AbstractElevatorMovementBuilder implements ElevatorDirectionInter
     }
 
     /**
-     * @param \Elevator\Service\AbstractElevator $elevator
+     * @param AbstractElevator $elevator
      *
-     * @return \Elevator\Container\MovementContainer
+     * @return MovementContainer
      */
     public function getMovementPlan(AbstractElevator $elevator): MovementContainer
     {
